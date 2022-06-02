@@ -93,7 +93,7 @@ class NerChecker:
     founds = []
     matches = []
 
-    for compare_list in self.get_compare_list():
+    for compare_list in self.compare_list:
       oryg_entities.append(compare_list["oryg_entity"])
       oryg_labels.append(compare_list["oryg_label"])
       lib_entities .append(compare_list["entity"])
