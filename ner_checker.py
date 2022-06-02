@@ -2,16 +2,21 @@ from conllu import parse
 
 class NerChecker:
   def __init__(self, path_to_conllu_file):
-    #read annotations
+    """
+    1) read annotations from path_to_conllu_file
+    2) prepare data and text
+    3) prepare obj variables
+    """
+    #1) read annotations
     annotations = None
     with open(path_to_conllu_file) as f:
         annotations = f.read()
     #parse annotations, get sentences
     sentences = parse(annotations)
 
-    #prepare:
-    # - self.text
+    #2) prepare:
     # - self.data
+    # - self.text
     self.data={}
     form_list=[]
     form_list_all=[]
@@ -36,36 +41,49 @@ class NerChecker:
           lemma_saved = ""
     self.text = " ".join(form_list_all)
 
-    #comparate members
+    #3) compare members
     self.compare_list = []
+    self.statistics = []
 
   def get_text(self):
+    """
+    getter (text)
+    """
     return self.text
 
   def prepare_comparison(self, doc, label_mapping_dict):
+    """
+    function to prepare comparison
+    
+    doc : nlp object
+    label_mapping_dict : dict (mapping between oryginal label and nlp label which should be equal)
+    """
     for ent in doc.ents:
       entity = ent.text
       label = ent.label_
       self.__add_entity(entity.replace(" ","_"), label, label_mapping_dict)
 
-  def get_compare_list(self):
-    return self.compare_list
-  
-  def show_statistics(self):
+  def get_results_statistics(self):
+    """
+    get result information about how many positive,negative, not matched
+    """
     positive=0
     negative=0
     not_found=0
-    for compare_list in self.get_compare_list():
-      if compare_list["found"]:
-        if compare_list["match"]:
+    for compare_record in self.compare_list:
+      if compare_record["found"]:
+        if compare_record["match"]:
           positive+=1
         else:
           negative+=1
       else:
         not_found+=1
-    print({"positive":positive,"negative":negative,"not_found":not_found})
-  
-  def show_in_array(self):
+    return {"positive":positive,"negative":negative,"not_found":not_found}
+
+  def get_results_data_frame(self):
+    """
+    get result information in data frame
+    """
     import pandas as pd
 
     oryg_entities = []
@@ -98,6 +116,7 @@ class NerChecker:
       self.compare_list.append({"entity":entity,"label":label, "oryg_entity":oryg_entity, "oryg_label":oryg_label,"found":True,"match":True})
     else:
       self.compare_list.append({"entity":entity,"label":label, "oryg_entity":oryg_entity, "oryg_label":oryg_label,"found":True,"match":False})
+
 
   def __add_entity(self, entity, label, label_mapping_dict):
     for oryg_entity, oryg_label in self.data.items():
