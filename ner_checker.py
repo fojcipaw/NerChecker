@@ -4,7 +4,7 @@ import pandas as pd
 import time
 
 class NerChecker:
-  def __init__(self, file_type="conllu", path_to_file):
+  def __init__(self, path_to_file, file_type="conllu"):
     if file_type=="conllu":
         sentences = self.__conllu_prepare_sentences(path_to_file)
         self.__conllu_prepare_text(sentences)
