@@ -1,4 +1,3 @@
-!pip install conllu
 from conllu import parse
 import pandas as pd
 import time
