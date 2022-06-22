@@ -37,7 +37,7 @@ class NerChecker:
   def get_text(self):
     return self.text
     
-  def get_measurements(self):
+  def get_results(self):
     import math
     
     data={}
