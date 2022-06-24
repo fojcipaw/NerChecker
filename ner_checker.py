@@ -3,10 +3,10 @@ import pandas as pd
 import time
 
 class NerChecker:
-  def __init__(self, path_to_file, file_type="conllu"):
+  def __init__(self, path_to_file, file_type="conllu", sentences_limit=0):
     if file_type=="conllu":
         sentences = self.__conllu_prepare_sentences(path_to_file)
-        self.__conllu_prepare_text(sentences)
+        self.__conllu_prepare_text(sentences, sentences_limit)
     else:
         pass
     self.data = {}
@@ -122,12 +122,13 @@ class NerChecker:
     sentences = parse(annotations)
     return sentences
   
-  def __conllu_prepare_text(self, sentences):
+  def __conllu_prepare_text(self, sentences, sentences_limit):
     self.oryg=[]
     form_list=[]
     text_list=[]
-    #for sentence in sentences[:100]: #for test purpose
-    for sentence in sentences[:10]:
+    if sentences_limit == 0:
+        sentences_limit = len(sentences)
+    for sentence in sentences[:sentences_limit]:
       for token in sentence:
         id = token['id']
         lemma = token['lemma']
