@@ -11,12 +11,16 @@ class NerChecker:
         pass
     self.data = {}
   
-  def nlp(self, nlp):
+  def __nlp(self, nlp_action):
     st = time.time()
-    doc = nlp(self.get_text())
+    doc = nlp_action(self.get_text())
     et = time.time()
     elapsed_time = et - st
-    return doc, elapsed_time
+    return elapsed_time, doc
+
+  def add(self, lib_name, version, nlp_action, label_mapping):
+    elapsed_time, doc = self.__nlp(nlp_action)
+    self.__compare(lib_name, version, elapsed_time, doc, label_mapping)
   
   def get_df(self, lib_name):
     oryg_entities = []
@@ -44,6 +48,7 @@ class NerChecker:
     for lib_name, value in self.data.items():
         qmc = value["qmc"]
         lib_elapsed_time = value["elapsed_time"]
+        version = value["version"]
         #print(qmc)
         #	(sensitivity, recall) true positive rate = TP/(TP+FN) = 1 − false negative rate
         recall = true_positive_rate=qmc['True Positive']/(qmc['True Positive']+qmc['False Negative'])
@@ -62,13 +67,13 @@ class NerChecker:
         #print("G-score",g_score)
         #Accuracy
         accuracy=(qmc['True Positive']+qmc['True Negative'])/(qmc['True Positive']+qmc['False Positive']+qmc['True Negative']+qmc['False Negative'])
-        data.update({lib_name:[true_positive_rate,false_positive_rate,positive_predictive_value,f_score,g_score,accuracy, lib_elapsed_time]})
+        data.update({lib_name:[version, true_positive_rate,false_positive_rate,positive_predictive_value,f_score,g_score,accuracy, lib_elapsed_time]})
 
     df = pd.DataFrame(data)
-    df.index=["true_positive_rate (recall, sensitivity)","false_positive_rate (specificity)", "positive_predictive_value (precision)","f_score","g_score","accuracy","elapsed time"]
+    df.index=["version","true_positive_rate (recall, sensitivity)","false_positive_rate (specificity)", "positive_predictive_value (precision)","f_score","g_score","accuracy","elapsed time"]
     return df
-
-  def compare(self, lib_name, elapsed_time, doc, label_mapping):
+  
+  def __compare(self, lib_name, version, elapsed_time, doc, label_mapping):
     """
     function to prepare comparison
     lib_name: name of the nlp library, eg "spacy", "stanza"
@@ -78,19 +83,22 @@ class NerChecker:
     data = []
     qmc={"True Positive":0,"True Negative":0,"False Positive":0,"False Negative":0} #quality measurement counter
     base_idx = 0
+
     for o in self.oryg:
         o_entity = o[0]
         o_label = o[1]
         is_added = False
 
-        for idx in range(base_idx,len(doc.ents)):
-            l_entity = doc.ents[idx].text
-            l_label = self.__get_label(doc.ents[idx])
+        spans = self.__get_spans(lib_name, doc)
+
+        for idx in range(base_idx, len(spans)):
+            l_entity = self.__get_entity(lib_name, spans[idx]) #spans[idx].text
+            l_label = self.__get_label(lib_name, spans[idx])
             if self.__is_entity_eq(o_entity, l_entity):
 
                 for j in range(base_idx+1,idx):
-                    lj_entity = doc.ents[j].text
-                    lj_label = self.__get_label(doc.ents[j])
+                    lj_entity = self.__get_entity(lib_name, spans[j]) #spans[j].text
+                    lj_label = self.__get_label(lib_name, spans[j])
                     data.append((None,None,lj_entity,lj_label,"True Negative"))
                     qmc["True Negative"]+=1
 
@@ -112,7 +120,7 @@ class NerChecker:
         if is_added == False:
             data.append((o_entity,o_label,None,None,"False Negative"))
             qmc["False Negative"]+=1
-    self.data.update({lib_name:{"data":data, "qmc":qmc, "elapsed_time": elapsed_time}})
+    self.data.update({lib_name:{"data":data, "qmc":qmc, "elapsed_time":elapsed_time, "version":version}})
 
   def __conllu_prepare_sentences(self, path_to_file):
     annotations = None
@@ -175,10 +183,32 @@ class NerChecker:
     
     return False
   
-  def __get_label(self, entity):
-    label = ""
-    try:
-      label = entity.label_
-    except:
-      label = entity.type
-    return label
+  def __get_spans(self, lib_name, doc):
+    if lib_name == "flair":
+      return doc.get_spans('ner')
+    if lib_name == "nltk":
+      ents = []
+      for chunk in doc:
+        if hasattr(chunk, 'label'):
+          ents.append(chunk)
+      return ents
+    else:
+      return doc.ents
+
+  def __get_entity(self, lib_name, entity):
+    if lib_name == "nltk":
+      return ' '.join(c[0] for c in entity)
+    else:
+      return entity.text
+
+  def __get_label(self, lib_name, entity):
+    if lib_name == "spacy":    
+      return entity.label_
+    elif lib_name == "stanza":    
+      return entity.type
+    elif lib_name == "flair":
+      return entity.get_label().value
+    elif lib_name == "nltk":
+      return entity.label()
+    else:      
+      return None #Error
