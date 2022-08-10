@@ -51,9 +51,9 @@ class NerChecker:
         version = value["version"]
         #print(qmc)
         #	(sensitivity, recall) true positive rate = TP/(TP+FN) = 1 − false negative rate
-        recall = 0
+        recall = true_positive_rate = 0
         if (qmc['True Positive']+qmc['False Negative']) > 0:
-            recall = true_positive_rate=qmc['True Positive']/(qmc['True Positive']+qmc['False Negative'])
+            recall = true_positive_rate = qmc['True Positive']/(qmc['True Positive']+qmc['False Negative'])
         #print("sensitivity = recall = true_positive_rate",true_positive_rate)
         #	(specificity) false positive rate = FP/(FP+TN)
         false_positive_rate = 0
@@ -61,7 +61,7 @@ class NerChecker:
             false_positive_rate=qmc['False Positive']/(qmc['False Positive']+qmc['True Negative'])
         #print("specificity = false_positive_rate",false_positive_rate)
         # (precision) positive predictive value = TP/(TP+FP)
-        precision  = 0
+        precision  = positive_predictive_value = 0
         if (qmc['True Positive']+qmc['False Positive']) > 0:
             precision = positive_predictive_value = qmc['True Positive']/(qmc['True Positive']+qmc['False Positive'])
         #print("precision = positive_predictive_value",positive_predictive_value)
