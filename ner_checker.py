@@ -67,7 +67,7 @@ class NerChecker:
         #print("precision = positive_predictive_value",positive_predictive_value)
         #F-score is the harmonic mean of precision and recall
         f_score = "div/0"
-        if (precision+recall)) > 0:
+        if (precision+recall) > 0:
             f_score = 2 * ((precision*recall)/(precision+recall))
         #print("F-score",f_score)
         #G-score is the geometric mean of precision and recall
