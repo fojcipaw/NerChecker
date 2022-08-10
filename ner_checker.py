@@ -51,16 +51,24 @@ class NerChecker:
         version = value["version"]
         #print(qmc)
         #	(sensitivity, recall) true positive rate = TP/(TP+FN) = 1 − false negative rate
-        recall = true_positive_rate=qmc['True Positive']/(qmc['True Positive']+qmc['False Negative'])
+        recall = "div/0"
+        if (qmc['True Positive']+qmc['False Negative']) > 0:
+            recall = true_positive_rate=qmc['True Positive']/(qmc['True Positive']+qmc['False Negative'])
         #print("sensitivity = recall = true_positive_rate",true_positive_rate)
-        #	(specificity) false positive rate = FP/(FP+TN) 
-        false_positive_rate=qmc['False Positive']/(qmc['False Positive']+qmc['True Negative'])
+        #	(specificity) false positive rate = FP/(FP+TN)
+        false_positive_rate = "div/0"
+        if (qmc['False Positive']+qmc['True Negative']) > 0:
+            false_positive_rate=qmc['False Positive']/(qmc['False Positive']+qmc['True Negative'])
         #print("specificity = false_positive_rate",false_positive_rate)
         # (precision) positive predictive value = TP/(TP+FP)
-        precision = positive_predictive_value = qmc['True Positive']/(qmc['True Positive']+qmc['False Positive'])
+        precision  = "div/0"
+        if (qmc['True Positive']+qmc['False Positive']) > 0:
+            precision = positive_predictive_value = qmc['True Positive']/(qmc['True Positive']+qmc['False Positive'])
         #print("precision = positive_predictive_value",positive_predictive_value)
         #F-score is the harmonic mean of precision and recall
-        f_score = 2 * ((precision*recall)/(precision+recall))
+        f_score = "div/0"
+        if (precision+recall)) > 0:
+            f_score = 2 * ((precision*recall)/(precision+recall))
         #print("F-score",f_score)
         #G-score is the geometric mean of precision and recall
         g_score = math.sqrt(precision*recall)
