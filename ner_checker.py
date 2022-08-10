@@ -60,7 +60,7 @@ class NerChecker:
         precision = positive_predictive_value = qmc['True Positive']/(qmc['True Positive']+qmc['False Positive'])
         #print("precision = positive_predictive_value",positive_predictive_value)
         #F-score is the harmonic mean of precision and recall
-        f_score = 2*math.sqrt((precision*recall)/(precision+recall))
+        f_score = 2 * ((precision*recall)/(precision+recall))
         #print("F-score",f_score)
         #G-score is the geometric mean of precision and recall
         g_score = math.sqrt(precision*recall)
@@ -150,6 +150,8 @@ class NerChecker:
           lemma_saved = lemma[2:]
         elif lemma[0:2] == "I-":
           form_list.append(form)
+        elif lemma[0:2] == "E-": #?
+          form_list.append(form) #?
         else:
           if form_list:
             self.oryg.append((" ".join(form_list),lemma_saved))
@@ -192,12 +194,17 @@ class NerChecker:
         if hasattr(chunk, 'label'):
           ents.append(chunk)
       return ents
+    elif lib_name == "trankit":
+      return self.__prepare_trankit_doc(doc)
     else:
       return doc.ents
 
   def __get_entity(self, lib_name, entity):
+    print(lib_name, entity) #TODO
     if lib_name == "nltk":
       return ' '.join(c[0] for c in entity)
+    elif lib_name == "trankit":
+      return entity[0]
     else:
       return entity.text
 
@@ -210,5 +217,27 @@ class NerChecker:
       return entity.get_label().value
     elif lib_name == "nltk":
       return entity.label()
+    elif lib_name == "trankit":
+      return entity[1]
     else:      
       return None #Error
+  
+  def __prepare_trankit_doc(self, doc):
+    trankit_doc = []
+    for sentence in doc['sentences']:
+      tokens = sentence['tokens']
+      lemma = ""
+      for t in tokens:
+        lemma_part = t['text']
+        label = t['ner']
+
+        if label[0:2] == "B-":
+          lemma = lemma_part
+        elif label[0:2] == "I-":
+          lemma += " " + lemma_part
+        elif label[0:2] == "E-": #?
+          lemma += " " + lemma_part
+          trankit_doc.append((lemma,label[2:]))
+        else:
+          pass
+    return trankit_doc
