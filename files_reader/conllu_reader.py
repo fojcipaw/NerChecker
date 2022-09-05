@@ -31,9 +31,12 @@ class ConlluReader:
         def __get_one_sentence_with_ents(self):
             return self.one_sentence_with_ents
         
-    def __init__(self, path_to_file):
+    def __init__(self, path_to_file, sentences_limit = 0):
         sentences = self.__conllu_prepare_sentences(path_to_file)
-        self.sent_and_ents, self.ents, self.text = self.__prepare_doc_and_text(sentences)
+        if sentences_limit == 0:
+            self.sent_and_ents, self.ents, self.text = self.__prepare_doc_and_text(sentences)
+        else:
+            self.sent_and_ents, self.ents, self.text = self.__prepare_doc_and_text(sentences[:sentences_limit])
     
     def get_text(self):
         return self.text
