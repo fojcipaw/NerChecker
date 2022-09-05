@@ -11,8 +11,8 @@ from tools.results import NerResult
 from ner.ner_get import get_lib
 
 class NerChecker:
-    def __init__(self, file_path):
-        self.reader = ConlluReader(file_path)
+    def __init__(self, file_path, sentences_limit):
+        self.reader = ConlluReader(file_path, sentences_limit)
         self.comparator = NerCompare()
         self.result = NerResult()
         self.df_data = {}
