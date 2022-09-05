@@ -9,9 +9,17 @@ import stanza
 class Stanza_lib(Ner_lib):
     def __init__(self, lib_map):
         super().__init__("stanza", stanza.__version__, lib_map)
-        stanza.download('en') # download English model
-        self.nlp = stanza.Pipeline(lang='en', processors='tokenize,ner')
-    
+
+    def init_language(self, language_name):
+        if language_name == "english":
+            stanza.download('en') # download English model
+            self.nlp = stanza.Pipeline(lang='en', processors='tokenize,ner')
+        elif language_name == "germany":
+            stanza.download('de') # download German model
+            self.nlp = stanza.Pipeline(lang='de', processors='tokenize,ner') # initialize German neural pipeline
+        else:
+            raise Exception("Unsupported language")
+
     def prepare(self, doc):
         '''
         prepare dictionary of entities

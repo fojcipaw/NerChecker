@@ -9,7 +9,14 @@ import spacy
 class Spacy_lib(Ner_lib):
     def __init__(self, lib_map):
         super().__init__("spacy", spacy.__version__, lib_map)
-        self.nlp = spacy.load("en_core_web_sm")
+
+    def init_language(self, language_name):
+        if language_name == "english":
+            self.nlp = spacy.load("en_core_web_sm")
+        elif language_name == "germany":
+            self.nlp = spacy.load("de_core_news_sm")
+        else:
+            raise Exception("Unsupported language")
     
     def prepare(self, doc):
         '''

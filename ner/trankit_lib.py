@@ -10,8 +10,15 @@ import trankit
 class Trankit_lib(Ner_lib):
     def __init__(self, lib_map):
         super().__init__("trankit", trankit.__version__, lib_map)
-        self.p = Pipeline('english')
     
+    def init_language(self, language_name):
+        if language_name == "english":
+            self.p = Pipeline('english')
+        elif language_name == "germany":
+            p = Pipeline('german')
+        else:
+            raise Exception("Unsupported language")
+
     def prepare(self, doc):
         '''
         prepare dictionary of entities

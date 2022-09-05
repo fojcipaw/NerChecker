@@ -13,6 +13,9 @@ class Flair_lib(Ner_lib):
         super().__init__("flair", flair.__version__, lib_map)
         self.tagger = SequenceTagger.load('ner')
     
+    def init_language(self, language_name):
+        pass
+    
     def prepare(self, doc):
         '''
         prepare dictionary of entities

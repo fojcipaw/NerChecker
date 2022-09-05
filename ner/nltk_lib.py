@@ -14,6 +14,9 @@ class Nltk_lib(Ner_lib):
         nltk.download('maxent_ne_chunker')
         nltk.download('words')
     
+    def init_language(self, language_name):
+        pass
+
     def prepare(self, doc):
         '''
         prepare dictionary of entities

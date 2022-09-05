@@ -18,6 +18,9 @@ class Ner_lib():
     def get_version(self):
         return self.version
 
+    def init_language(self, language_name):
+        raise Exception("Unsupported language")
+
     def prepare(self, doc):
         '''
         prepare dictionary of entities
