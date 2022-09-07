@@ -14,7 +14,7 @@ class Trankit_lib(Ner_lib):
     def init_language(self, language_name):
         if language_name == "english":
             self.p = Pipeline('english')
-        elif language_name == "germany":
+        elif language_name == "german":
             p = Pipeline('german')
         else:
             raise Exception("Unsupported language")

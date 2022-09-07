@@ -14,7 +14,7 @@ class Stanza_lib(Ner_lib):
         if language_name == "english":
             stanza.download('en') # download English model
             self.nlp = stanza.Pipeline(lang='en', processors='tokenize,ner')
-        elif language_name == "germany":
+        elif language_name == "german":
             stanza.download('de') # download German model
             self.nlp = stanza.Pipeline(lang='de', processors='tokenize,ner') # initialize German neural pipeline
         else:

@@ -13,7 +13,7 @@ class Spacy_lib(Ner_lib):
     def init_language(self, language_name):
         if language_name == "english":
             self.nlp = spacy.load("en_core_web_sm")
-        elif language_name == "germany":
+        elif language_name == "german":
             self.nlp = spacy.load("de_core_news_sm")
         else:
             raise Exception("Unsupported language")
