@@ -48,8 +48,12 @@ class ConlluReader:
         return self.ents
 
     def __conllu_prepare_sentences(self, path_to_file):
-        with open(path_to_file) as f:
-            annotations = f.read()
+#         
+#         
+#         with open(path_to_file, mode="r") as f:
+#             annotations = f.read()
+#             
+        annotations = open(path_to_file, mode="r", encoding="utf-8").read()
         sentences = parse(annotations)
         return sentences
 
