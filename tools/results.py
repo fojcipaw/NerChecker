@@ -52,13 +52,17 @@ class NerResult:
         #Accuracy
         accuracy=(len(data['TP'])+len(data['TN']))/(len(data['TP'])+len(data['FP'])+len(data['TN'])+len(data['FN']))
         
+        l1 = list(d[0] for d in data['TP'])
+        l2 = list(d[0] for d in data['FP'])
+        entities_common = len(set(l1+l2))
+        
         return {'true_positive_rate':true_positive_rate,
                 'false_positive_rate':false_positive_rate,
                 'positive_predictive_value':positive_predictive_value,
                 'f_score':f_score,
                 'g_score':g_score,
                 'accuracy':accuracy,
-                'entities common':len(data['TP'])+len(data['FP']),
+                'entities common': entities_common,
                 'entities lib':data['len__lib_ent'],
                 'entities oryg':data['len__oryg_ent'],
                 'elapsed_time': data['elapsed_time']
