@@ -3,6 +3,7 @@ Created on 31 sie 2022
 
 @author: fojcjpaw
 '''
+from tools.results import NerResult
 class NerCompare:
     def __init__(self):
         pass
@@ -105,3 +106,25 @@ class NerCompare:
             return True
         
         return False
+    
+if __name__ == "__main__":
+    nercompare = NerCompare()
+    map = {}
+    '''
+    ents={entity1:[label1, label2, etc],
+          entity2:[label1, label2, etc],}
+    '''
+    ents_lib = {'a':['1'],
+                'b':['1'],
+                'd':['1'],
+                'e':['1'],
+                }
+    ents_oryg= {'a':['1'],
+                'b':['2'],
+                'c':['1'],
+                }
+    data = nercompare.compare(ents_lib, ents_oryg, map)
+    result = NerResult()
+    data['elapsed_time'] = 0
+    data = result.get_result(data)
+    print(data)

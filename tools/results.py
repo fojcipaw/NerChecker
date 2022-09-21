@@ -9,6 +9,21 @@ class NerResult:
     def __init__(self):
         pass
     
+    def get_header(self, data, lib_name, lib_version):
+        return {lib_name: 
+               [lib_version,
+               data['true_positive_rate'],
+               data['false_positive_rate'],
+               data['positive_predictive_value'],
+               data['f_score'],
+               data['g_score'],
+               data['accuracy'],
+               data['entities common'],
+               data['entities lib'],
+               data['entities oryg'],
+               data['elapsed_time'],]
+               }
+    
     def get_result(self, data):
         #print(data)
         #    (sensitivity, recall) true positive rate = TP/(TP+FN) = 1 − false negative rate
@@ -43,6 +58,7 @@ class NerResult:
                 'f_score':f_score,
                 'g_score':g_score,
                 'accuracy':accuracy,
+                'entities common':len(data['TP'])+len(data['FP']),
                 'entities lib':data['len__lib_ent'],
                 'entities oryg':data['len__oryg_ent'],
                 'elapsed_time': data['elapsed_time']
