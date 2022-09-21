@@ -25,24 +25,12 @@ class NerChecker:
     def add(self, lib_obj):
         lib_obj.init_language(self.language)
         lib_ent, elapsed_time = self.__prepare(lib_obj)
-        compare_data = self.comparator.compare(lib_ent, self.reader.get_ents(), lib_obj.get_map())        
+        compare_data = self.comparator.compare(lib_ent, self.reader.get_ents(), lib_obj.get_map())
         compare_data['elapsed_time'] = elapsed_time
         self.compare_data.update({lib_obj.get_name():compare_data})
         
         data = self.result.get_result(compare_data)
-        
-        self.df_data.update({lib_obj.get_name(): 
-                   [lib_obj.get_version(),
-                   data['true_positive_rate'],
-                   data['false_positive_rate'],
-                   data['positive_predictive_value'],
-                   data['f_score'],
-                   data['g_score'],
-                   data['accuracy'],
-                   data['entities lib'],
-                   data['entities oryg'],
-                   data['elapsed_time'],]
-                   })
+        self.df_data.update(self.result.get_header(data, lib_obj.get_name(), lib_obj.get_version()))
         
     def __prepare(self, lib_obj):
         st = time.time()
@@ -65,6 +53,7 @@ class NerChecker:
                   'positive_predictive_value (precision)',
                   'f_score','g_score',
                   'accuracy',
+                  'entities common',
                   'entities lib',
                   'entities oryg',
                   'elapsed time']
