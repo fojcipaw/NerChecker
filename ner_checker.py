@@ -18,6 +18,7 @@ class NerChecker:
         self.compare_data = {}
         self.df_data = {}
         self.language = language
+        self.lib_ents = {}
     
     def get_text(self):
         return self.reader.get_text()
@@ -25,6 +26,7 @@ class NerChecker:
     def add(self, lib_obj):
         lib_obj.init_language(self.language)
         lib_ent, elapsed_time = self.__prepare(lib_obj)
+        self.lib_ents.update({lib_obj.get_name():lib_ent})
         compare_data = self.comparator.compare(lib_ent, self.reader.get_ents(), lib_obj.get_map())
         compare_data['elapsed_time'] = elapsed_time
         self.compare_data.update({lib_obj.get_name():compare_data})
